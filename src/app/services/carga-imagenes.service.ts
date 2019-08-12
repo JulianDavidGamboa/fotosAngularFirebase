@@ -15,7 +15,19 @@ export class CargaImagenesService {
 
   cargarImagenesFirebase( imagenes: FileItem[] ) {
 
-    console.log( imagenes );
+    const storageRef = firebase.storage().ref();
+
+    for ( const item of imagenes ) {
+
+      item.estaSubiendo = true;
+
+      if ( item.progreso >= 100 ) {
+        continue;
+      }
+
+      // const uploadTask:  firebase.storage.UploadTask = 
+
+    }
 
   }
 
