@@ -25,7 +25,29 @@ export class CargaImagenesService {
         continue;
       }
 
-      // const uploadTask:  firebase.storage.UploadTask = 
+      const uploadTask:  firebase.storage.UploadTask = storageRef.child(`${ this.CARPETA_IMAGENES }/${ item.nombreArchivo }`)
+                            .put( item.archivo );
+
+      uploadTask.on( firebase.storage.TaskEvent.STATE_CHANGED,
+        ( snapshot: firebase.storage.UploadTaskSnapshot ) => item.progreso = ( snapshot.bytesTransferred / snapshot.totalBytes ) * 100,
+        ( error ) => console.error('Error al subir', error),
+        () => {
+          uploadTask.snapshot.ref.getDownloadURL().then(
+            (onfullfilled: any) => {
+              console.log('(promise) the download url is: ' + onfullfilled);
+              item.url = onfullfilled;
+              console.log(item.url);
+              item.estaSubiendo = false;
+              this.guardarImagen({
+                nombre: item.nombreArchivo,
+                url: item.url
+              });
+            },
+            (onrejected: any) => {
+              console.log('(promise) the download url has been rejected');
+            });
+        } 
+      );
 
     }
 
